@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
+	"ginit/cmd/ginit/commands"
 	"os"
 
-	"github.com/vakintosh/Govial_Init/cmd/ginit/commands" // Import the commands package
+	// Import the commands package
 
 	"github.com/spf13/cobra"
 )
@@ -21,7 +22,7 @@ func main() {
 	}
 
 	// Add subcommands here
-	rootCmd.AddCommand(commands.InitCommand()) // Use the InitCommand function from the ginit/commands package
+	rootCmd.AddCommand(commands.TfCommand()) // Use the InitCommand function from the ginit/commands package
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
