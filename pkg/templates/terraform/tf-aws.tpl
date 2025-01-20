@@ -17,6 +17,14 @@ terraform {
 
 provider "aws" {
   region = " "
+  
+  default_tags {
+    tags = {
+      Environment     = "Prod"
+      Project         = "{{ .ProjectName }}"
+      Owner           = "Vakintosh"
+    }
+  }
 }
 {{else}}
 # This section is for Terraform v0.12 or earlier
@@ -28,16 +36,23 @@ provider "aws" {
 {{end}}
 
 {{define "main.tf"}}
-# Main entry point for resources
-# Add resource definitions here
+resource "aws_test" "this" {
+
+}
 {{end}}
 
 {{define "variables.tf"}}
-# Declare input variables here
+variable " " {
+  description = " "
+  type        = string
+}
 {{end}}
 
 {{define "outputs.tf"}}
-# Declare output values here
+output "test" {
+  description = "Description"
+  value       = aws_test.this.arn
+}
 {{end}}
 
 {{define "Readme.md"}}
