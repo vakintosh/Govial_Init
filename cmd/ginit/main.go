@@ -22,7 +22,8 @@ func main() {
 	}
 
 	// Add subcommands here
-	rootCmd.AddCommand(commands.TfCommand()) // Use the InitCommand function from the ginit/commands package
+	rootCmd.AddCommand(commands.TfCommand())
+	rootCmd.AddCommand(commands.K8sCommand())
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
