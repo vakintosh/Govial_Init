@@ -2,8 +2,8 @@ package terraform
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
+	"sync"
 	"text/template"
 	"time"
 )
@@ -29,50 +29,60 @@ func GenerateTerraformProject(outputDir, projectName, author, templateType strin
 		IsTerraformV0_13OrLater: isV0_13OrLater,
 	}
 
-	// Select the template file based on the --module flag
-	templateFile := "pkg/templates/terraform/tf-aws.tpl"
+	// Determine the template file based on the templateType
+	var templateFile string
 	if templateType == "module" {
-		templateFile = "pkg/templates/terraform/tf-aws-module.tpl"
+		templateFile = filepath.Join("pkg", "templates", "terraform", "tf-aws-module.tpl")
+	} else {
+		templateFile = filepath.Join("pkg", "templates", "terraform", "tf-aws.tpl")
 	}
 
-	// Load and apply the selected template
 	tmpl, err := template.ParseFiles(templateFile)
 	if err != nil {
 		return fmt.Errorf("failed to parse template file: %v", err)
 	}
 
-	// Dynamically get the list of files to generate
+	// Get the list of files to generate
 	filesToGenerate, err := GetDefinedFiles(templateFile)
 	if err != nil {
 		return fmt.Errorf("failed to extract defined files from template: %v", err)
 	}
 
-	// Generate each file based on the template
+	// Use a WaitGroup to synchronize Go routines
+	var wg sync.WaitGroup
+	errChan := make(chan error, len(filesToGenerate)) // Capture errors
+
+	// Generate each file in parallel
 	for _, file := range filesToGenerate {
-		outputFile := filepath.Join(outputDir, file)
+		wg.Add(1)
+		go func(file string) {
+			defer wg.Done() // Signal completion of the Go routine
+			outputFile := filepath.Join(outputDir, file)
 
-		// Render the template for the current file
-		renderedContent, err := RenderTemplate(tmpl, file, data)
+			// Render the template for the current file
+			renderedContent, err := RenderTemplate(tmpl, file, data)
+			if err != nil {
+				errChan <- err
+				return
+			}
+
+			// Create the file and write the content
+			if err := CreateFile(outputFile, renderedContent); err != nil {
+				errChan <- err
+			}
+		}(file)
+	}
+
+	// Wait for all Go routines to complete
+	wg.Wait()
+	close(errChan)
+
+	// Check for errors during file generation
+	for err := range errChan {
 		if err != nil {
-			return err
-		}
-
-		// Create the file and write the content
-		if err := CreateFile(outputFile, renderedContent); err != nil {
 			return err
 		}
 	}
 
-	return nil
-}
-
-// Ensure the output directory exists, create it if not
-func ensureOutputDirExists(outputDir string) error {
-	if _, err := os.Stat(outputDir); os.IsNotExist(err) {
-		err := os.MkdirAll(outputDir, os.ModePerm)
-		if err != nil {
-			return fmt.Errorf("failed to create output directory: %v", err)
-		}
-	}
 	return nil
 }
