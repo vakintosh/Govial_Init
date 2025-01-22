@@ -24,6 +24,8 @@ To install G-init, clone the repository and build the project:
 ```bash
 git clone https://github.com/vakintosh/Govial_Init.git ginit
 cd ginit
+go mod init ginit
+go mod tidy
 go build -o ginit ./cmd/ginit/main.go
 ```
 
