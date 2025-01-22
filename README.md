@@ -49,7 +49,7 @@ We are continuously adding support for more languages and technologies. Stay tun
 After building the project, you can use the `ginit` command followed by the desired shortcut to initialize your project. For example:
 
 ```bash
-ginit tf .
+./ginit tf .
 ```
 
 This command will set up a new Terraform project within the current work directory with the recommended structure.
