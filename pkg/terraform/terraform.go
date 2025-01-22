@@ -2,6 +2,7 @@ package terraform
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"sync"
 	"text/template"
@@ -84,5 +85,16 @@ func GenerateTerraformProject(outputDir, projectName, author, templateType strin
 		}
 	}
 
+	return nil
+}
+
+// Ensure the output directory exists, create it if not
+func ensureOutputDirExists(outputDir string) error {
+	if _, err := os.Stat(outputDir); os.IsNotExist(err) {
+		err := os.MkdirAll(outputDir, os.ModePerm)
+		if err != nil {
+			return fmt.Errorf("failed to create output directory: %v", err)
+		}
+	}
 	return nil
 }
