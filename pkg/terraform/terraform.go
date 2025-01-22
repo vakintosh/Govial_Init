@@ -2,17 +2,17 @@ package terraform
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 	"sync"
 	"text/template"
 	"time"
+
+	"github.com/vakintosh/Govial_Init/pkg/utils"
 )
 
 // GenerateTerraformProject initializes a new Terraform project
 func GenerateTerraformProject(outputDir, projectName, author, templateType string) error {
-	// Ensure the output directory exists
-	if err := ensureOutputDirExists(outputDir); err != nil {
+	if err := utils.EnsureOutputDirExists(outputDir); err != nil {
 		return err
 	}
 
@@ -85,16 +85,5 @@ func GenerateTerraformProject(outputDir, projectName, author, templateType strin
 		}
 	}
 
-	return nil
-}
-
-// Ensure the output directory exists, create it if not
-func ensureOutputDirExists(outputDir string) error {
-	if _, err := os.Stat(outputDir); os.IsNotExist(err) {
-		err := os.MkdirAll(outputDir, os.ModePerm)
-		if err != nil {
-			return fmt.Errorf("failed to create output directory: %v", err)
-		}
-	}
 	return nil
 }
