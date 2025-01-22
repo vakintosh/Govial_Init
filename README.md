@@ -27,6 +27,21 @@ cd ginit
 go build -o ginit ./cmd/ginit/main.go
 ```
 
+## Supported Languages
+
+G-init supports the following languages and technologies:
+
+- Terraform - Ok
+- Python - In Progress
+- Go - In Progress
+- Kubernetes - In Progress
+- JavaScript - In Progress
+- TypeScript - In Progress
+- Docker - In Progress
+- Ansible - In Progress
+
+We are continuously adding support for more languages and technologies. Stay tuned for updates!
+
 ## Usage
 
 After building the project, you can use the `ginit` command followed by the desired shortcut to initialize your project. For example:
